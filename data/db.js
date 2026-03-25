@@ -8,7 +8,7 @@ db.exec(`
   name TEXT NOT NULL,
   password TEXT NOT NULL,
   email TEXT NOT NULL,
-  adress TEXT NOT NULL,
+  address TEXT NOT NULL,
   createdAt TEXT
 )
   `);
@@ -17,7 +17,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS orders (
     id TEXT PRIMARY KEY,
     userId TEXT,
-    ETA INTEGER,
+    ETA INTEGER NOT NULL,
     createdAt TEXT,
     FOREIGN KEY(userId) REFERENCES users(id)
   );
@@ -26,19 +26,21 @@ db.exec(`
 db.exec(`
   CREATE TABLE IF NOT EXISTS menu (
     id TEXT PRIMARY KEY,
-    title TEXT,
-    desc TEXT,
-    price INTEGER
+    title TEXT NOT NULL,
+    desc TEXT NOT NULL,
+    price INTEGER NOT NULL
   );
 `);
 
 db.exec(`
   CREATE TABLE IF NOT EXISTS orderItems (
     id TEXT PRIMARY KEY,
-    oder_id TEXT,
-    menu_id TEXT,
-    quantity INTEGER
-    price INTEGER
+    order_id TEXT NOT NULL,
+    menu_id TEXT NOT NULL,
+    quantity INTEGER NOT NULL,
+    price INTEGER NOT NULL,
+    FOREIGN KEY(order_id) REFERENCES orders(id),
+    FOREIGN KEY(menu_id) REFERENCES menu(id)
   );
 `);
 
