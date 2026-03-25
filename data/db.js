@@ -6,7 +6,6 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS users (
   id TEXT PRIMARY KEY,
   name TEXT NOT NULL,
-  password TEXT NOT NULL,
   email TEXT NOT NULL,
   address TEXT NOT NULL,
   createdAt TEXT
