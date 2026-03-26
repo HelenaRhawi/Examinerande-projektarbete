@@ -4,6 +4,16 @@ import db from "../data/db.js";
 
 const router = Router();
 
+router.get("/", (req, res) => {
+  try {
+    const users = db.prepare("SELECT * FROM users").all();
+    res.json(users);
+  } catch (error) {
+    console.error("GET /user:", error);
+    res.status(500).json({ fel: "Kunde inte hämta användare", error });
+  }
+});
+
 router.post("/", (req, res) => {
   const { name, email, address } = req.body;
 
