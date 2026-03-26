@@ -38,9 +38,9 @@ Hämtar en specifik film.
 
 ---
 
-## POST /api/movies
+## POST /api/user
 
-Skapar en ny film.
+Skapar en ny användare.
 
 **Body:**
 
