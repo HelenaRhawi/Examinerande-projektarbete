@@ -19,7 +19,6 @@ router.post("/", validateOrder, (req, res) => {
     const eta = Math.floor(Math.random() * 10) + 5;
     const createdAt = new Date().toISOString();
 
-    // Skapa order
     db.prepare(
       `
       INSERT INTO orders (id, userId, ETA, createdAt)
@@ -27,7 +26,6 @@ router.post("/", validateOrder, (req, res) => {
     `,
     ).run(orderId, userId || null, eta, createdAt);
 
-    // Förbered insert för items
     const insertItem = db.prepare(`
       INSERT INTO orderItems (id, order_id, menu_id, quantity, price)
       VALUES (?, ?, ?, ?, ?)
@@ -43,7 +41,6 @@ router.post("/", validateOrder, (req, res) => {
       );
     }
 
-    // Hämta items med namn
     const items = db
       .prepare(
         `
@@ -58,7 +55,6 @@ router.post("/", validateOrder, (req, res) => {
       )
       .all(orderId);
 
-    // Hämta order + user name
     const orderWithUser = db
       .prepare(
         `
@@ -74,22 +70,22 @@ router.post("/", validateOrder, (req, res) => {
       )
       .get(orderId);
 
-    // Räkna total
     const totalPrice = items.reduce((sum, item) => {
       return sum + item.quantity * item.price;
     }, 0);
 
-    // Svar
     res.status(201).json({
       orderId: orderWithUser.id,
       name: orderWithUser.name || null,
       address: orderWithUser.address,
-      eta: `${orderWithUser.ETA} min`,
-      totalPrice: `${totalPrice} SEK`,
+
       items: items.map((item) => ({
         name: item.title,
         quantity: item.quantity,
+        price: `${item.price} SEK per st.`,
       })),
+      eta: `${orderWithUser.ETA} min`,
+      totalPrice: `${totalPrice} SEK`,
     });
   } catch (error) {
     console.error("POST /orders:", error);
