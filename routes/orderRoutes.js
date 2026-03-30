@@ -84,8 +84,8 @@ router.post("/", validateOrder, (req, res) => {
       orderId: orderWithUser.id,
       name: orderWithUser.name || null,
       address: orderWithUser.address,
-      eta: orderWithUser.ETA,
-      totalPrice,
+      eta: `${orderWithUser.ETA} min`,
+      totalPrice: `${totalPrice} SEK`,
       items: items.map((item) => ({
         name: item.title,
         quantity: item.quantity,
