@@ -7,11 +7,19 @@ export default function validateOrder(req, res, next) {
     return res.status(400).json({ fel: "Ordern måste innehålla items" });
   }
 
-  const menu = db.prepare("SELECT * FROM menu").all();
-
   try {
     const validatedItems = items.map((item) => {
-      const menuItem = menu.find((m) => m.id == item.menuId);
+      if (!item.menuId) {
+        throw new Error("menuId saknas");
+      }
+
+      if (!item.quantity || item.quantity <= 0) {
+        throw new Error(`Ogiltig quantity för produkt ${item.menuId}`);
+      }
+
+      const menuItem = db
+        .prepare("SELECT id, price FROM menu WHERE id = ?")
+        .get(item.menuId);
 
       if (!menuItem) {
         throw new Error(`Produkt ${item.menuId} finns inte`);
@@ -24,9 +32,7 @@ export default function validateOrder(req, res, next) {
       };
     });
 
-  
     req.validatedItems = validatedItems;
-
     next();
   } catch (error) {
     return res.status(400).json({ fel: error.message });

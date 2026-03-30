@@ -13,13 +13,13 @@ router.get("/", (req, res) => {
 router.post("/", validateOrder, (req, res) => {
   try {
     const { userId } = req.body;
-
     const validatedItems = req.validatedItems;
 
     const orderId = uuidv4();
     const eta = Math.floor(Math.random() * 10) + 5;
     const createdAt = new Date().toISOString();
 
+    // Skapa order
     db.prepare(
       `
       INSERT INTO orders (id, userId, ETA, createdAt)
@@ -27,6 +27,7 @@ router.post("/", validateOrder, (req, res) => {
     `,
     ).run(orderId, userId || null, eta, createdAt);
 
+    // Förbered insert för items
     const insertItem = db.prepare(`
       INSERT INTO orderItems (id, order_id, menu_id, quantity, price)
       VALUES (?, ?, ?, ?, ?)
@@ -42,7 +43,8 @@ router.post("/", validateOrder, (req, res) => {
       );
     }
 
-    const itemsWithNames = db
+    // Hämta items med namn
+    const items = db
       .prepare(
         `
       SELECT 
@@ -56,15 +58,35 @@ router.post("/", validateOrder, (req, res) => {
       )
       .all(orderId);
 
-    const total = itemsWithNames.reduce((sum, item) => {
+    // Hämta order + user name
+    const orderWithUser = db
+      .prepare(
+        `
+      SELECT 
+        o.id,
+        o.ETA,
+        u.name,
+        u.address
+      FROM orders o
+      LEFT JOIN users u ON o.userId = u.id
+      WHERE o.id = ?
+    `,
+      )
+      .get(orderId);
+
+    // Räkna total
+    const total = items.reduce((sum, item) => {
       return sum + item.quantity * item.price;
     }, 0);
 
+    // Svar
     res.status(201).json({
-      orderId,
-      eta,
+      orderId: orderWithUser.id,
+      name: orderWithUser.name || null,
+      address: orderWithUser.address,
+      eta: orderWithUser.ETA,
       total,
-      items: itemsWithNames.map((item) => ({
+      items: items.map((item) => ({
         name: item.title,
         quantity: item.quantity,
       })),
