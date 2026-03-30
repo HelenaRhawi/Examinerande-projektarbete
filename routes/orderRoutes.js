@@ -75,7 +75,7 @@ router.post("/", validateOrder, (req, res) => {
       .get(orderId);
 
     // Räkna total
-    const total = items.reduce((sum, item) => {
+    const totalPrice = items.reduce((sum, item) => {
       return sum + item.quantity * item.price;
     }, 0);
 
@@ -85,7 +85,7 @@ router.post("/", validateOrder, (req, res) => {
       name: orderWithUser.name || null,
       address: orderWithUser.address,
       eta: orderWithUser.ETA,
-      total,
+      totalPrice,
       items: items.map((item) => ({
         name: item.title,
         quantity: item.quantity,
