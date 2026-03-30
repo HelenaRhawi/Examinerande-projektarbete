@@ -1,7 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import apiRouter from "./routes/api.js";
-import menuRouter from "./routes/menuRoutes.js";
 import menu from "./data/menu.json" with { type: "json" };
 import db from "./data/db.js";
 
