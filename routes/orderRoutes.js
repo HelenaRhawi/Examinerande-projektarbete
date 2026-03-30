@@ -37,7 +37,7 @@ router.get("/:id", (req, res) => {
       WHERE oi.order_id =?`,
         )
         .all(order.id);
-      const totalPrice = items.reduce((sum, item) => {
+      const totalPrice = userOrders.reduce((sum, item) => {
         return sum + item.quantity * item.price;
       }, 0);
       return {
@@ -45,7 +45,7 @@ router.get("/:id", (req, res) => {
         createdAt: order.createdAt,
         userOrder: userOrders.map((item) => ({
           name: item.title,
-          quantity: item.quantity,
+          quantity: `${item.quantity} st`,
           price: `${item.price} SEK per st.`,
         })),
         totalPrice,
