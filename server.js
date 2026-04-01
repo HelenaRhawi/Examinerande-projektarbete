@@ -16,13 +16,13 @@ if (existingMenu.count === 0) {
     insert.run(item.id, item.title, item.desc, item.price);
   }
 }
-// app.use(express.json());
+
 app.use("/api", apiRouter);
 
 app.get("/", (_req, res) => {
-  res.json({ meddelande: "Välkommen till Mr Bean API" });
+  res.json({ Message: "Welcome to Mr Bean API" });
 });
 
 app.listen(PORT, () => {
-  console.log(`API:et lyssnar på http://localhost:${PORT}`);
+  console.log(`API listening to http://localhost:${PORT}`);
 });

@@ -4,17 +4,17 @@ export default function validateOrder(req, res, next) {
   const { items } = req.body;
 
   if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ fel: "Ordern måste innehålla items" });
+    return res.status(400).json({ Error: "Order must contain items" });
   }
 
   try {
     const validatedItems = items.map((item) => {
       if (!item.menuId) {
-        throw new Error("menuId saknas");
+        throw new Error("missing menuId");
       }
 
-      if (!item.quantity || item.quantity <= 0) {
-        throw new Error(`Ogiltig quantity för produkt ${item.menuId}`);
+      if (!Number.isInteger(item.quantity) || item.quantity < 0) {
+        throw new Error(` quantity for item not valid ${item.menuId}`);
       }
 
       const menuItem = db
@@ -22,11 +22,11 @@ export default function validateOrder(req, res, next) {
         .get(item.menuId);
 
       if (!menuItem) {
-        throw new Error(`Produkt ${item.menuId} finns inte`);
+        throw new Error(`Product ${item.menuId} does not exist`);
       }
 
       return {
-        menu_id: menuItem.id,
+        menuId: menuItem.id,
         quantity: item.quantity,
         price: menuItem.price,
       };
@@ -35,6 +35,6 @@ export default function validateOrder(req, res, next) {
     req.validatedItems = validatedItems;
     next();
   } catch (error) {
-    return res.status(400).json({ fel: error.message });
+    return res.status(400).json({ Error: error.message });
   }
 }

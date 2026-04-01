@@ -4,13 +4,13 @@ import db from "../data/db.js";
 
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   try {
     const menu = db.prepare("SELECT * FROM menu").all();
     res.json(menu);
   } catch (error) {
     console.error("GET /menu:", error);
-    res.status(500).json({ Fel: "Kunde inte hämta menyn!", error });
+    res.status(500).json({ Error: "Server error." });
   }
 });
 export default router;

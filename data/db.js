@@ -34,12 +34,12 @@ db.exec(`
 db.exec(`
   CREATE TABLE IF NOT EXISTS orderItems (
     id TEXT PRIMARY KEY,
-    order_id TEXT NOT NULL,
-    menu_id TEXT NOT NULL,
+    orderId TEXT NOT NULL,
+    menuId TEXT NOT NULL,
     quantity INTEGER NOT NULL,
     price INTEGER NOT NULL,
-    FOREIGN KEY(order_id) REFERENCES orders(id),
-    FOREIGN KEY(menu_id) REFERENCES menu(id)
+    FOREIGN KEY(orderId) REFERENCES orders(id),
+    FOREIGN KEY(menuId) REFERENCES menu(id)
   );
 `);
 
