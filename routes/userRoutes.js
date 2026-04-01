@@ -6,7 +6,7 @@ import validateUserUpdate from "../middleware/validateUserUpdate.js";
 import validateID from "../middleware/validateID.js";
 const router = Router();
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   try {
     const users = db.prepare("SELECT * FROM users").all();
     res.json(users);
