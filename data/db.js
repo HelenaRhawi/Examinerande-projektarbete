@@ -43,4 +43,11 @@ db.exec(`
   );
 `);
 
+db.exec(`
+  CREATE TABLE IF NOT EXISTS campaigns (
+    id TEXT PRIMARY KEY,
+    discount INTEGER NOT NULL
+  );
+`);
+
 export default db;

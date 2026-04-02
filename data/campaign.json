@@ -1,0 +1,12 @@
+{
+  "campaigns": [
+    {
+      "id": "4df3b4b3-709e-4aff-864b-b36afce95286",
+      "discount": 0.75
+    },
+    {
+      "id": "7a443cc3-5039-4a02-a7dc-f19177cf9c5f",
+      "discount": 0.5
+    }
+  ]
+}

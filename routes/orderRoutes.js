@@ -4,6 +4,7 @@ import db from "../data/db.js";
 import validateOrder from "../middleware/validateOrder.js";
 import validateID from "../middleware/validateID.js";
 import validateOptionalUser from "../middleware/validateOptionalUser.js";
+import validateCampaign from "../middleware/validateCampaign.js";
 
 const router = Router();
 
@@ -66,36 +67,45 @@ router.get("/user/:id/orders", validateID("users"), (req, res) => {
   }
 });
 
-router.post("/", validateOptionalUser, validateOrder, (req, res) => {
-  try {
-    const validatedItems = req.validatedItems;
-    const orderId = uuidv4();
-    const eta = Math.floor(Math.random() * 10) + 5;
-    const createdAt = new Date().toISOString();
+router.post(
+  "/",
+  validateOptionalUser,
+  validateOrder,
+  validateCampaign,
+  (req, res) => {
+    try {
+      const validatedItems = req.validatedItems;
+      const orderId = uuidv4();
+      const eta = Math.floor(Math.random() * 10) + 5;
+      const createdAt = new Date().toISOString();
 
-    const userId = req.user ? req.user.id : null;
+      const userId = req.user ? req.user.id : null;
 
-  
-
-    db.prepare(
-      `
+      db.prepare(
+        `
       INSERT INTO orders (id, userId, ETA, createdAt)
       VALUES (?, ?, ?, ?)
     `,
-    ).run(orderId, userId, eta, createdAt);
+      ).run(orderId, userId, eta, createdAt);
 
-    const insertItem = db.prepare(`
+      const insertItem = db.prepare(`
       INSERT INTO orderItems (id, orderId, menuId, quantity, price)
       VALUES (?, ?, ?, ?, ?)
     `);
 
-    for (const item of validatedItems) {
-      insertItem.run(uuidv4(), orderId, item.menuId, item.quantity, item.price);
-    }
+      for (const item of validatedItems) {
+        insertItem.run(
+          uuidv4(),
+          orderId,
+          item.menuId,
+          item.quantity,
+          item.price,
+        );
+      }
 
-    const items = db
-      .prepare(
-        `
+      const items = db
+        .prepare(
+          `
       SELECT 
         oi.quantity,
         oi.price,
@@ -104,12 +114,12 @@ router.post("/", validateOptionalUser, validateOrder, (req, res) => {
       JOIN menu m ON oi.menuId = m.id
       WHERE oi.orderId = ?
     `,
-      )
-      .all(orderId);
+        )
+        .all(orderId);
 
-    const orderWithUser = db
-      .prepare(
-        `
+      const orderWithUser = db
+        .prepare(
+          `
       SELECT 
         o.id,
         o.ETA,
@@ -119,30 +129,36 @@ router.post("/", validateOptionalUser, validateOrder, (req, res) => {
       LEFT JOIN users u ON o.userId = u.id
       WHERE o.id = ?
     `,
-      )
-      .get(orderId);
+        )
+        .get(orderId);
 
-    const totalPrice = items.reduce((sum, item) => {
-      return sum + item.quantity * item.price;
-    }, 0);
+      let totalPrice = items.reduce((sum, item) => {
+        return sum + item.quantity * item.price;
+      }, 0);
 
-    res.status(201).json({
-      orderId: orderWithUser.id,
-      name: orderWithUser.name || null,
-      address: orderWithUser.address || null,
+      if (req.campaign) {
+        totalPrice = totalPrice * req.campaign.discount;
+      }
 
-      items: items.map((item) => ({
-        name: item.title,
-        quantity: `${item.quantity} unit.`,
-        price: `${item.price} SEK per unit.`,
-      })),
-      eta: `${orderWithUser.ETA} minutes`,
-      totalPrice: `${totalPrice} SEK`,
-    });
-  } catch (error) {
-    console.error("POST /orders:", error);
-    res.status(500).json({ Error: "Server error." });
-  }
-});
+      res.status(201).json({
+        orderId: orderWithUser.id,
+        name: orderWithUser.name || null,
+        address: orderWithUser.address || null,
+
+        items: items.map((item) => ({
+          name: item.title,
+          quantity: `${item.quantity} unit.`,
+          price: `${item.price} SEK per unit.`,
+        })),
+        eta: `${orderWithUser.ETA} minutes`,
+        discount: req.campaign ? `${(1 - req.campaign.discount) * 100}%` : null,
+        totalPrice: `${totalPrice} SEK`,
+      });
+    } catch (error) {
+      console.error("POST /orders:", error);
+      res.status(500).json({ Error: "Server error." });
+    }
+  },
+);
 
 export default router;

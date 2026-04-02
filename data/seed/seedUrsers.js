@@ -17,7 +17,7 @@ export function seedUsersIfEmpty() {
       const now = new Date().toISOString();
 
       for (const user of users.users) {
-        insert.run(uuidv4(), user.name, user.email, user.address, now);
+        insert.run(user.id, user.name, user.email, user.address, now);
       }
     }
   } catch (error) {

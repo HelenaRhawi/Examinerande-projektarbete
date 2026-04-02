@@ -1,4 +1,3 @@
-// middleware/validateOptionalUser.js
 import db from "../data/db.js";
 import { validate as validateUUID } from "uuid";
 
