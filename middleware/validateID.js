@@ -13,7 +13,7 @@ export default function validateID(table, idColumn = "id") {
     const record = db.prepare(query).get(id);
 
     if (!record) {
-      return res.status(404).json({ Error: `${table} Could not find` });
+      return res.status(404).json({ Error: `${table} could not be found` });
     }
 
     req.record = record;
