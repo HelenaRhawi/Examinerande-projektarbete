@@ -75,6 +75,8 @@ router.post("/", validateOptionalUser, validateOrder, (req, res) => {
 
     const userId = req.user ? req.user.id : null;
 
+  
+
     db.prepare(
       `
       INSERT INTO orders (id, userId, ETA, createdAt)
