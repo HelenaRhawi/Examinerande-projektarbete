@@ -14,37 +14,31 @@ Hämtar hela menyn.
 ```json
 [
   {
-    "id": "1.0",
     "title": "Bryggkaffe",
     "desc": "Bryggd på månadens bönor.",
     "price": 39
   },
   {
-    "id": "2.0",
     "title": "Caffè Doppio",
     "desc": "Bryggd på månadens bönor.",
     "price": 49
   },
   {
-    "id": "3.0",
     "title": "Cappuccino",
     "desc": "Bryggd på månadens bönor.",
     "price": 49
   },
   {
-    "id": "4.0",
     "title": "Latte Macchiato",
     "desc": "Bryggd på månadens bönor.",
     "price": 49
   },
   {
-    "id": "5.0",
     "title": "Kaffe Latte",
     "desc": "Bryggd på månadens bönor.",
     "price": 54
   },
   {
-    "id": "6.0",
     "title": "Cortado",
     "desc": "Bryggd på månadens bönor.",
     "price": 39
@@ -71,18 +65,16 @@ Hämtar alla användarna.
 ```json
 [
   {
-    "id": "06433d5c-130f-4f1f-8ad6-cfb04a34d369",
     "name": "luna",
     "email": "luna@example.com",
     "address": "123 Luna St, Luna City, Luna",
-    "createdAt": "2026-04-02T09:38:23.901Z"
+    "createdAt": "2026-04-06T09:47:32.687Z"
   },
   {
-    "id": "29249968-4ce2-4b05-a7af-66505b1309d0",
     "name": "maria",
     "email": "maria@example.com",
     "address": "123 Maria St, Maria City, Maria",
-    "createdAt": "2026-04-02T09:38:23.901Z"
+    "createdAt": "2026-04-06T09:47:32.687Z"
   }
 ]
 ```
@@ -117,11 +109,9 @@ Alla fält är obligatoriska.
 
 ```json
 {
-  "id": "90aed62a-91ca-4c45-9275-df48f0fc2712",
   "name": "Lotta",
   "email": "lotta@example.com",
-  "address": "123 Main St, Anytown, USA",
-  "createdAt": "2026-04-02T09:40:11.672Z"
+  "address": "123 Main St, Anytown, USA"
 }
 ```
 
@@ -171,11 +161,9 @@ Uppdaterar en specifiks användares data.
 
 ```json
 {
-  "id": "29249968-4ce2-4b05-a7af-66505b1309d0",
   "name": "John Doe",
   "email": "john.doe@example.com",
-  "address": "Banangatan 2, 123456, Stockholm",
-  "createdAt": "2026-04-02T09:38:23.901Z"
+  "address": "Banangatan 2, 123456, Stockholm"
 }
 ```
 
@@ -247,24 +235,13 @@ Hämtar alla lagda ordrar.
 **Svar:** `200 OK`
 
 ```json
- {
-        "id": "04f09af5-f91b-4988-8041-e0a611c58ece",
-        "userId": "90aed62a-91ca-4c45-9275-df48f0fc2712",
-        "ETA": 11,
-        "createdAt": "2026-04-02T11:16:04.079Z"
-    },
-    {
-        "id": "8a8076ab-7999-47a8-a6e7-995e635d2ded",
-        "userId": "29249968-4ce2-4b05-a7af-66505b1309d0",
-        "ETA": 9,
-        "createdAt": "2026-04-02T11:17:52.062Z"
-    },
-    {
-        "id": "7ad025d1-a90a-4523-916d-6aa830e67ceb",
-        "userId": "06433d5c-130f-4f1f-8ad6-cfb04a34d369",
-        "ETA": 14,
-        "createdAt": "2026-04-02T11:18:25.560Z"
-    }
+[
+  {
+    "name": "John Doe",
+    "address": "banangatan, Nyköping",
+    "ETA": 8
+  }
+]
 ```
 
 **Fel:** `500  Internel Server Error`
@@ -368,25 +345,32 @@ Användare:
 
 ```json
 {
-  "userId": "29249968-4ce2-4b05-a7af-66505b1309d0",
+    "userId": "54f2ed8d-d6ec-4f3c-ace2-5b41f79e8f34",
+    "name": "John Doe",
+    "address": "banangatan, Nyköping",
   "items": [
-    { "menuId": "5", "quantity": 2 },
-    { "menuId": "3", "quantity": 1 }
-  ]
+    { "menuId": 3.0, "quantity": 5 },
+    { "menuId": 6.0, "quantity": 4 }
+  ],
+  "campaignId":"4df3b4b3-709e-4aff-864b-b36afce95286"
 }
+
+Med rabattkod!
 ```
 
 **Body:**
 Skapa en ny order som gäst.
 
 ```json
-{
-  "userId": "",
+ {
+    "name": "Karin",
+    "address": "Körgatan 2, Nyköping",
   "items": [
-    { "menuId": "3", "quantity": 2 },
-    { "menuId": "1", "quantity": 1 }
+    { "menuId": 3.0, "quantity": 5 },
+    { "menuId": 6.0, "quantity": 4 }
   ]
 }
+Utan rabattkod
 ```
 
 **Svar:** `201 Created`
@@ -394,23 +378,24 @@ Användare:
 
 ```json
 {
-  "orderId": "264b43a1-7ec0-405e-9560-193251bc67dc",
+  "orderId": "894e150e-2c44-4461-8b92-60c973767655",
   "name": "John Doe",
-  "address": "Banangatan 2, 123456, Stockholm",
+  "address": "banangatan, Nyköping",
   "items": [
     {
-      "name": "Kaffe Latte",
-      "quantity": "2 unit.",
-      "price": "54 SEK per unit."
+      "name": "Cappuccino",
+      "quantity": "5 unit.",
+      "price": "49 SEK per unit."
     },
     {
-      "name": "Cappuccino",
-      "quantity": "1 unit.",
-      "price": "49 SEK per unit."
+      "name": "Cortado",
+      "quantity": "4 unit.",
+      "price": "39 SEK per unit."
     }
   ],
-  "eta": "6 minutes",
-  "totalPrice": "157 SEK"
+  "eta": "11 minutes",
+  "discount": "25%",
+  "totalPrice": "300.75 SEK"
 }
 ```
 
@@ -418,23 +403,23 @@ Gäst:
 
 ```json
 {
-  "orderId": "726d0c3f-f8a3-416f-8359-08d7e0730279",
-  "name": null,
-  "address": null,
+  "orderId": "a6b7c577-4e14-41d8-ac2d-a543c6c43b31",
+  "name": "Karin",
+  "address": "Körgatan 2, Nyköping",
   "items": [
     {
       "name": "Cappuccino",
-      "quantity": "2 unit.",
+      "quantity": "5 unit.",
       "price": "49 SEK per unit."
     },
     {
-      "name": "Bryggkaffe",
-      "quantity": "1 unit.",
+      "name": "Cortado",
+      "quantity": "4 unit.",
       "price": "39 SEK per unit."
     }
   ],
   "eta": "11 minutes",
-  "totalPrice": "137 SEK"
+  "totalPrice": "401 SEK"
 }
 ```
 
