@@ -213,6 +213,7 @@ Error: "This e-mail is already being used!"
 Tar bort användare med ett specifikt id.
 
 **Svar:** `204 No Content` (tom body)
+
 **Fel:** `400 Bad Request`
 
 ```json

@@ -1,10 +1,22 @@
 import db from "../data/db.js";
 
 export default function validateOrder(req, res, next) {
-  const { items } = req.body;
+  const { name, address, items } = req.body;
 
-  if (!items || !Array.isArray(items) || items.length === 0) {
-    return res.status(400).json({ Error: "Order must contain items" });
+  if (
+    !items ||
+    !Array.isArray(items) ||
+    items.length === 0 ||
+    !name ||
+    typeof name !== "string" ||
+    name.trim() === "" ||
+    !address ||
+    typeof address !== "string" ||
+    address.trim() === ""
+  ) {
+    return res
+      .status(400)
+      .json({ Error: "Order must contain name, address and items" });
   }
 
   try {

@@ -78,15 +78,16 @@ router.post(
       const orderId = uuidv4();
       const eta = Math.floor(Math.random() * 10) + 5;
       const createdAt = new Date().toISOString();
+      const { name,address } = req.body;
 
       const userId = req.user ? req.user.id : null;
 
       db.prepare(
         `
-      INSERT INTO orders (id, userId, ETA, createdAt)
-      VALUES (?, ?, ?, ?)
+      INSERT INTO orders (id, userId, name, ETA, address, createdAt)
+      VALUES (?, ?,?, ?, ?,?)
     `,
-      ).run(orderId, userId, eta, createdAt);
+      ).run(orderId, userId, name, eta, address, createdAt);
 
       const insertItem = db.prepare(`
       INSERT INTO orderItems (id, orderId, menuId, quantity, price)
@@ -142,8 +143,8 @@ router.post(
 
       res.status(201).json({
         orderId: orderWithUser.id,
-        name: orderWithUser.name || null,
-        address: orderWithUser.address || null,
+        name: name,
+        address: address,
 
         items: items.map((item) => ({
           name: item.title,
@@ -151,7 +152,11 @@ router.post(
           price: `${item.price} SEK per unit.`,
         })),
         eta: `${orderWithUser.ETA} minutes`,
-        discount: req.campaign ? `${(1 - req.campaign.discount) * 100}%` : null,
+
+        ...(req.campaign && {
+          discount: `${(1 - req.campaign.discount) * 100}%`,
+        }),
+
         totalPrice: `${totalPrice} SEK`,
       });
     } catch (error) {

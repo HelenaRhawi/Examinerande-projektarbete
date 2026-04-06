@@ -8,10 +8,6 @@ const router = Router();
 
 router.get("/", (req, res) => {
   try {
-    if (req.query.fail === "true") {
-      throw new Error("Simulated failure");
-    }
-
     const users = db.prepare("SELECT * FROM users").all();
     res.json(users);
   } catch (error) {
