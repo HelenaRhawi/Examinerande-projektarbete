@@ -1,4 +1,4 @@
-# Examinerande-projektarbete
+# Examinerande-projektarbete (grupp 2)
 
 Ett API för att User ska kunna lägga order och läsa orderhistorik.
 
